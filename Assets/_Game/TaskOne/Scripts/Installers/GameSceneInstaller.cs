@@ -14,7 +14,7 @@ namespace TaskOne.Installers
 			Container.BindInstance((GridSettingsData)Resources.Load("Data/GridSettingsData")).AsSingle();
 			Container.BindInstance(_gridManager).AsSingle().NonLazy();
 			Container.Bind<GridSetupService>().AsSingle().NonLazy();
-			
+			Container.BindInterfacesAndSelfTo<CellMarkerPoolService>().AsSingle().NonLazy();
 		}
 	}
 }
