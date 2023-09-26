@@ -13,7 +13,6 @@ namespace TaskOne.Grid.Utils
 		private GridManager _gridManager;
 		private GridManager.Settings _gridSettings;
 		private CellObjectFactory _cellObjectFactory;
-		private AddressableLoader _addressableLoader;
 
 		private Transform _gridParent;
 
@@ -49,58 +48,14 @@ namespace TaskOne.Grid.Utils
 		{
 			_gridSettings = gridSettingsData.GridSettings;
 			_gridManager = gridManager;
-			_addressableLoader = addressableLoader;
 			_cellObjectFactory = cellObjectFactory;
 			GridEvents.OnGridSetupComplete += OnSetupComplete;
 		}
 
-		public async void SetupGrid()
+		public void SetupGrid()
 		{
 			_cellObjectFactory.LoadAndCreateGridElements();
 		}
-
-		// public async void SetupGrid()
-		// {
-		// 	_gridParent = _gridManager.gridParent;
-		// 	var cellLoad = _addressableLoader.LoadAsset(_gridSettings.cellPrefab);
-		// 	await cellLoad;
-		// 	if (cellLoad.IsCompletedSuccessfully)
-		// 		CreateGrid();
-		// }
-		//
-		// private void CreateGrid()
-		// {
-		// 	_gridManager.CellControllers = new CellController[_gridSettings.width, _gridSettings.height];
-		// 	Vector3 cellPos = Vector3.zero;
-		// 	for (int y = 0; y < _gridSettings.height; y++)
-		// 	{
-		// 		cellPos.y = y * _gridSettings.distance;
-		// 		for (int x = 0; x < _gridSettings.width; x++)
-		// 		{
-		// 			cellPos.x = x * _gridSettings.distance;
-		// 			var cellCoordinate = new Vector2Int(x, y);
-		// 			CreateCell(cellCoordinate, cellPos);
-		// 		}
-		// 	}
-		// }
-		//
-		// private void CreateCell(Vector2Int coordinate, Vector3 pos)
-		// {
-		// 	Addressables.InstantiateAsync(_gridSettings.cellPrefab, _gridParent).Completed += handle =>
-		// 	{
-		// 		if (handle.Status == AsyncOperationStatus.Succeeded)
-		// 		{
-		// 			var cellController = handle.Result.GetComponent<CellController>();
-		// 			if (ReferenceEquals(cellController, null)) return;
-		// 			_gridManager.CellControllers[coordinate.x, coordinate.y] = cellController;
-		//
-		// 			cellController.Setup(pos, coordinate);
-		// 		}
-		//
-		// 		if (_gridManager.CellControllers[_gridSettings.width - 1, _gridSettings.height - 1] != null)
-		// 			OnGridSetupComplete?.Invoke();
-		// 	};
-		// }
 
 		private void OnSetupComplete()
 		{

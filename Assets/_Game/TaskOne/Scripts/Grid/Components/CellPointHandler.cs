@@ -1,7 +1,6 @@
 ﻿using Shared.Finger;
 using TaskOne.Grid.Utils;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 namespace TaskOne.Grid.Components

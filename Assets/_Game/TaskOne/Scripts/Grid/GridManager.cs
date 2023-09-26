@@ -1,10 +1,8 @@
 using System;
 using JetBrains.Annotations;
 using TaskOne.Grid.Components;
-using TaskOne.Grid.Utils;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using Zenject;
 
 namespace TaskOne.Grid
 {

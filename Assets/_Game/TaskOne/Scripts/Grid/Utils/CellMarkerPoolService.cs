@@ -17,8 +17,8 @@ namespace TaskOne.Grid.Utils
 		private GridManager _gridManager;
 		private AddressableLoader _addressableLoader;
 
+		private const int InitialPoolSize = 10;
 		private bool _initialized;
-		private int _initialPoolSize = 10;
 		private Stack<CellMarkerController> _objectPool = new();
 
 		private CellMarkerPoolService(GridSettingsData gridSettingsData, GridManager gridManager,
@@ -33,7 +33,6 @@ namespace TaskOne.Grid.Utils
 		{
 			SetupPool();
 		}
-
 
 		private async void SetupPool()
 		{
@@ -53,7 +52,7 @@ namespace TaskOne.Grid.Utils
 
 		private void CreatePool()
 		{
-			for (int i = 0; i < _initialPoolSize; i++)
+			for (int i = 0; i < InitialPoolSize; i++)
 			{
 				Addressables.InstantiateAsync(_gridSettings.xObjectPrefab, _gridManager.cellMarkerPoolParent).Completed +=
 					OnObjectInstantiated;
@@ -75,7 +74,7 @@ namespace TaskOne.Grid.Utils
 		{
 			if (_objectPool.Count <= 3)
 				SetupPool();
-			
+
 			CellMarkerController marker = _objectPool.Pop();
 
 			return marker;
