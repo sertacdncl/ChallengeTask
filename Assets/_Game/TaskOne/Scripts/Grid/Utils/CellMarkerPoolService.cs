@@ -34,15 +34,21 @@ namespace TaskOne.Grid.Utils
 			SetupPool();
 		}
 
+
 		private async void SetupPool()
 		{
-			var xObjectLoad = _addressableLoader.LoadAsset(_gridSettings.xObjectPrefab);
-			await xObjectLoad;
-			if (xObjectLoad.IsCompletedSuccessfully || _initialized)
+			if (!_initialized)
 			{
-				CreatePool();
-				_initialized = true;
+				var xObjectLoad = _addressableLoader.LoadAsset(_gridSettings.xObjectPrefab);
+				await xObjectLoad;
+				if (xObjectLoad.IsCompletedSuccessfully)
+				{
+					CreatePool();
+					_initialized = true;
+				}
 			}
+			else
+				CreatePool();
 		}
 
 		private void CreatePool()
@@ -67,14 +73,14 @@ namespace TaskOne.Grid.Utils
 
 		public CellMarkerController GetCellMarkerFromPool()
 		{
-			if (_objectPool.Count == 0)
+			if (_objectPool.Count <= 3)
 				SetupPool();
-			CellMarkerController marker = _objectPool.Pop();
-			marker.gameObject.SetActive(true);
-			return marker;
 			
+			CellMarkerController marker = _objectPool.Pop();
+
+			return marker;
 		}
-		
+
 		public void ReturnCellMarkerToPool(CellMarkerController marker)
 		{
 			marker.gameObject.SetActive(false);
