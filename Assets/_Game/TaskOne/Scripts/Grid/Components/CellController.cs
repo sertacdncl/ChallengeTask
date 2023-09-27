@@ -6,20 +6,13 @@ namespace TaskOne.Grid.Components
 {
 	public class CellController : MonoBehaviour
 	{
+		[Inject] private CellMarkerPoolService _cellMarkerPoolService;
+		private CellMarkerController CellMarkerController { get; set; }
 		public CellNeighbours Neighbours;
 		public Vector2Int coordinate;
-		public CellMarkerController CellMarkerController { get; set; }
-		[Inject] private CellMarkerPoolService _cellMarkerPoolService;
 
-		private void OnEnable()
-		{
-			GridEvents.OnTouchCellComplete += OnTouch;
-		}
 
-		private void OnDisable()
-		{
-			GridEvents.OnTouchCellComplete -= OnTouch;
-		}
+		public bool IsMarked => !ReferenceEquals(CellMarkerController, null);
 
 		public void Setup(Vector3 basePos, Vector2Int coords)
 		{
@@ -33,10 +26,38 @@ namespace TaskOne.Grid.Components
 			if (ReferenceEquals(CellMarkerController, null))
 			{
 				CellMarkerController = _cellMarkerPoolService.GetCellMarkerFromPool();
-				var cellMarkerTransform = CellMarkerController.transform;
-				cellMarkerTransform.SetParent(transform);
-				cellMarkerTransform.localPosition = Vector3.zero;
-				CellMarkerController.gameObject.SetActive(true);
+				CellMarkerController.Mark(transform);
+				CheckMarkMatches();
+			}
+			else
+			{
+				UnMark();
+			}
+		}
+
+		private void UnMark()
+		{
+			var tempCellMarkerController = CellMarkerController;
+			CellMarkerController = null;
+			tempCellMarkerController.UnMarkFade(() =>
+			{
+				_cellMarkerPoolService.ReturnCellMarkerToPool(tempCellMarkerController);
+				
+			});
+		}
+
+		private void CheckMarkMatches()
+		{
+			var markedNeighbours = Neighbours.GetMarkedNeighbours(this);
+			if (IsMarked && markedNeighbours.Count >= 2)
+			{
+				foreach (var markedCell in markedNeighbours)
+				{
+					markedCell.UnMark();
+				}
+
+				UnMark();
+				Debug.Log("Match found!");
 			}
 		}
 	}

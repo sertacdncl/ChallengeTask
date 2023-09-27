@@ -83,6 +83,7 @@ namespace TaskOne.Grid.Utils
 		public void ReturnCellMarkerToPool(CellMarkerController marker)
 		{
 			marker.gameObject.SetActive(false);
+			marker.transform.SetParent(_gridManager.cellMarkerPoolParent);
 			_objectPool.Push(marker);
 		}
 	}
