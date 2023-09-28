@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-namespace TaskOne.Addressable.Utils
+
+namespace Shared.Addressable.Utils
 {
 	[UsedImplicitly]
 	public class AddressableLoader

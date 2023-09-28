@@ -1,7 +1,7 @@
-using TaskOne.Addressable.Utils;
+using Shared.Addressable.Utils;
 using Zenject;
 
-namespace TaskOne.Installers
+namespace Shared.Installers
 {
 	public class ProjectInstaller : MonoInstaller<ProjectInstaller>
 	{

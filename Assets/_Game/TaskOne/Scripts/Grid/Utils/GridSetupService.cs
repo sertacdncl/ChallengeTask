@@ -1,6 +1,6 @@
 using System;
 using JetBrains.Annotations;
-using TaskOne.Addressable.Utils;
+using Shared.Addressable.Utils;
 using TaskOne.Grid.Components;
 using TaskOne.Grid.Config;
 using UnityEngine;
