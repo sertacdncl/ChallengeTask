@@ -32,11 +32,13 @@ namespace TaskOne.Camera
 			var gridHeight = _gridSettings.height;
 			var cellDistance = _gridSettings.distance;
 			
+			float aspectRatio = (float)Screen.width / Screen.height;
 			float gridWidthWorld = gridWidth * cellDistance;
 			float gridHeightWorld = gridHeight * cellDistance;
-			float cameraOrthoSize = Mathf.Max(gridWidthWorld / (2f * _virtualCamera.m_Lens.Aspect), gridHeightWorld / 2f);
-			
-			_virtualCamera.m_Lens.OrthographicSize = cameraOrthoSize + CameraSizeOffset;
+			float cameraOrthoSize = Mathf.Max(gridWidthWorld / (2 * aspectRatio), gridHeightWorld / 2);
+
+			var heightOffset = gridHeight > gridWidth ? 1f : 0f;
+			_virtualCamera.m_Lens.OrthographicSize = cameraOrthoSize + CameraSizeOffset + heightOffset;
 			_virtualCamera.transform.position = new Vector3(gridWidthWorld / 2f, gridHeightWorld / 2f, -10f);
 		}
 	}

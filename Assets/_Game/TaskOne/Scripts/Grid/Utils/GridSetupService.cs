@@ -4,6 +4,8 @@ using TaskOne.Addressable.Utils;
 using TaskOne.Grid.Components;
 using TaskOne.Grid.Config;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using Object = UnityEngine.Object;
 
 namespace TaskOne.Grid.Utils
 {
@@ -41,6 +43,16 @@ namespace TaskOne.Grid.Utils
 			GridEvents.OnGridSetupComplete += OnSetupComplete;
 		}
 
+		public void RebuildGrid()
+		{
+			foreach (var cellController in _gridManager.CellControllers)
+			{
+				Addressables.Release(cellController.gameObject);
+				// Object.Destroy(cellController.gameObject);
+			}
+			SetupGrid();
+		}
+		
 		public void SetupGrid()
 		{
 			_cellObjectFactory.LoadAndCreateGridElements();

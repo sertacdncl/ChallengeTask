@@ -22,5 +22,7 @@ namespace TaskOne.Addressable.Utils
 			Debug.LogError("Asset Reference Load Failed");
 			return null;
 		}
+		
+		
 	}
 }

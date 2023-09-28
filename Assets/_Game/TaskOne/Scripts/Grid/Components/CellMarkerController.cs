@@ -9,6 +9,7 @@ namespace TaskOne.Grid.Components
 	{
 		[SerializeField] private SpriteRenderer _spriteRenderer;
 		
+		private Tween _fadeTween;
 		public void Mark(Transform parent)
 		{
 			var cellMarkerTransform = transform;
@@ -21,7 +22,8 @@ namespace TaskOne.Grid.Components
 
 		public void UnMarkFade(TweenCallback onComplete)
 		{
-			_spriteRenderer.DOFade(0, 0.5f).OnComplete(onComplete);
+			_fadeTween?.Kill();
+			_fadeTween = _spriteRenderer.DOFade(0, 0.5f).OnComplete(onComplete);
 		}
 	}
 }

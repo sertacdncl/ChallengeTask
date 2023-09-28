@@ -2,6 +2,7 @@
 using TaskOne.Grid.Components;
 using TaskOne.Grid.Config;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using Zenject;
 
 namespace TaskOne.Grid.Utils
@@ -15,28 +16,35 @@ namespace TaskOne.Grid.Utils
 
 		private Transform _gridParent;
 		private GameObject _loadedCellPrefab;
-		
+		private bool _isInitialized;
+
 		[Inject]
-		public void Construct(DiContainer container, AddressableLoader addressableLoader, GridManager gridManager, GridSettingsData gridSettingsData)
+		public void Construct(DiContainer container, AddressableLoader addressableLoader, GridManager gridManager,
+			GridSettingsData gridSettingsData)
 		{
 			_container = container;
 			_addressableLoader = addressableLoader;
 			_gridManager = gridManager;
 			_gridSettings = gridSettingsData.GridSettings;
 		}
-		
+
 		public async void LoadAndCreateGridElements()
 		{
-			_gridParent = _gridManager.gridParent;
-			var cellLoad = _addressableLoader.LoadAsset(_gridSettings.cellPrefab);
-			await cellLoad;
-			if (cellLoad.IsCompletedSuccessfully)
+			if (!_isInitialized)
 			{
-				_loadedCellPrefab = cellLoad.Result;
-				CreateGrid();
+				_gridParent = _gridManager.gridParent;
+				var cellLoad = _addressableLoader.LoadAsset(_gridSettings.cellPrefab);
+				await cellLoad;
+				if (cellLoad.IsCompletedSuccessfully)
+				{
+					_loadedCellPrefab = cellLoad.Result;
+					CreateGrid();
+				}
 			}
+			else
+				CreateGrid();
 		}
-		
+
 		private void CreateGrid()
 		{
 			_gridManager.CellControllers = new CellController[_gridSettings.width, _gridSettings.height];
@@ -52,18 +60,39 @@ namespace TaskOne.Grid.Utils
 				}
 			}
 		}
-		
+
 		public void CreateCell(Vector2Int coordinate, Vector3 pos)
 		{
-			var instantiatedGameObject = _container.InstantiatePrefab(_loadedCellPrefab, _gridParent);
-			var cellController = instantiatedGameObject.GetComponent<CellController>();
-			if (ReferenceEquals(cellController, null)) return;
-			_gridManager.CellControllers[coordinate.x, coordinate.y] = cellController;
+			Addressables.InstantiateAsync(_gridSettings.cellPrefab, _gridParent).Completed += objHandle =>
+			{
+				var result = objHandle.Result;
+				var cellController = result.GetComponent<CellController>();
+				if (ReferenceEquals(cellController, null)) return;
+				_container.Inject(cellController);
+				_gridManager.CellControllers[coordinate.x, coordinate.y] = cellController;
+				
+				cellController.Setup(pos, coordinate);
 
-			cellController.Setup(pos, coordinate);
+				if (_gridManager.CellControllers[_gridSettings.width - 1, _gridSettings.height - 1] != null)
+				{
+					GridEvents.OnGridSetupComplete?.Invoke();
+					_isInitialized = true;
+				}
+			};
 			
-			if (_gridManager.CellControllers[_gridSettings.width - 1, _gridSettings.height - 1] != null)
-				GridEvents.OnGridSetupComplete?.Invoke();
+			// Another version of instantiate without Addressables
+			// var instantiatedGameObject = _container.InstantiatePrefab(_loadedCellPrefab, _gridParent);
+			// var cellController = instantiatedGameObject.GetComponent<CellController>();
+			// if (ReferenceEquals(cellController, null)) return;
+			// _gridManager.CellControllers[coordinate.x, coordinate.y] = cellController;
+			//
+			// cellController.Setup(pos, coordinate);
+			//
+			// if (_gridManager.CellControllers[_gridSettings.width - 1, _gridSettings.height - 1] != null)
+			// {
+			// 	GridEvents.OnGridSetupComplete?.Invoke();
+			// 	_isInitialized = true;
+			// }
 		}
 	}
 }
