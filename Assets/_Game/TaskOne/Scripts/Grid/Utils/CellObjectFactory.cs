@@ -15,7 +15,6 @@ namespace TaskOne.Grid.Utils
 		private AddressableLoader _addressableLoader;
 
 		private Transform _gridParent;
-		private GameObject _loadedCellPrefab;
 		private bool _isInitialized;
 
 		[Inject]
@@ -36,10 +35,7 @@ namespace TaskOne.Grid.Utils
 				var cellLoad = _addressableLoader.LoadAsset(_gridSettings.cellPrefab);
 				await cellLoad;
 				if (cellLoad.IsCompletedSuccessfully)
-				{
-					_loadedCellPrefab = cellLoad.Result;
 					CreateGrid();
-				}
 			}
 			else
 				CreateGrid();
