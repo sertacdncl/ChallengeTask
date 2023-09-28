@@ -5,7 +5,6 @@ using TaskOne.Grid.Components;
 using TaskOne.Grid.Config;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using Object = UnityEngine.Object;
 
 namespace TaskOne.Grid.Utils
 {
