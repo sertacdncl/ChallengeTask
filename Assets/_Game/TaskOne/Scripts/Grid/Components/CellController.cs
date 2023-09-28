@@ -1,5 +1,6 @@
 using DG.Tweening;
 using TaskOne.Grid.Utils;
+using UnityEditor;
 using UnityEngine;
 using Zenject;
 
@@ -14,7 +15,7 @@ namespace TaskOne.Grid.Components
 
 
 		public bool IsMarked => !ReferenceEquals(CellMarkerController, null);
-		private bool _isInteractable = true;
+		public bool IsInteractable { get; private set; } = true;
 
 		public void Setup(Vector3 basePos, Vector2Int coords)
 		{
@@ -25,7 +26,7 @@ namespace TaskOne.Grid.Components
 
 		public void OnTouch()
 		{
-			if (!_isInteractable)
+			if (!IsInteractable)
 				return;
 			if (ReferenceEquals(CellMarkerController, null))
 			{
@@ -43,14 +44,13 @@ namespace TaskOne.Grid.Components
 		{
 			var tempCellMarkerController = CellMarkerController;
 			CellMarkerController = null;
-			_isInteractable = false;
+			IsInteractable = false;
 			DOVirtual.DelayedCall(0.2f, () =>
 			{
-				_cellMarkerPoolService.ReturnCellMarkerToPool(tempCellMarkerController);
 				tempCellMarkerController.UnMarkFade(() =>
 				{
-					tempCellMarkerController.gameObject.SetActive(false);
-					_isInteractable = true;
+					_cellMarkerPoolService.ReturnCellMarkerToPool(tempCellMarkerController);
+					IsInteractable = true;
 				});
 			});
 			

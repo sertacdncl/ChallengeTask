@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 namespace TaskOne.Grid.Components
 {
-	public class CellPointHandler : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+	public class CellTouchHandler : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 	{
 		private CellMarkerPoolService _cellMarkerPoolService; 
 		[SerializeField] private CellController _cellController;

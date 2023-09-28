@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using System;
+using DG.Tweening;
 using Shared.Extensions;
 using UnityEngine;
 
@@ -23,6 +24,12 @@ namespace TaskOne.Grid.Components
 		{
 			_fadeTween?.Kill();
 			_fadeTween = _spriteRenderer.DOFade(0, 0.5f).OnComplete(onComplete);
+		}
+
+		public void Reset()
+		{
+			_fadeTween?.Kill();
+			_spriteRenderer.color = _spriteRenderer.color.With(a: 1);
 		}
 	}
 }

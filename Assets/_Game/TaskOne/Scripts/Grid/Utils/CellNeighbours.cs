@@ -11,6 +11,20 @@ namespace TaskOne.Grid.Utils
 		protected virtual CellController Right { get; set; }
 		protected virtual CellController Left { get; set; }
 
+		private List<CellController> GetNeighbourList()
+		{
+			var neighbours = new List<CellController>();
+			if (!ReferenceEquals(Up, null))
+				neighbours.Add(Up);
+			if (!ReferenceEquals(Down, null))
+				neighbours.Add(Down);
+			if (!ReferenceEquals(Right, null))
+				neighbours.Add(Right);
+			if (!ReferenceEquals(Left, null))
+				neighbours.Add(Left);
+			return neighbours;
+		}
+
 
 		public enum Direction
 		{
@@ -39,11 +53,10 @@ namespace TaskOne.Grid.Utils
 		public List<CellController> GetMarkedNeighbours(CellController baseCell
 			, List<CellController> markedNeighbors = null)
 		{
-			CellController[] neighbors = { Up, Down, Right, Left };
 			markedNeighbors ??= new List<CellController>();
-			foreach (var neighbor in neighbors)
+			foreach (var neighbor in GetNeighbourList())
 			{
-				if (markedNeighbors.Contains(neighbor) || ReferenceEquals(neighbor, baseCell))
+				if (markedNeighbors.Contains(neighbor) || ReferenceEquals(neighbor, baseCell) || !neighbor.IsInteractable)
 					continue;
 				if (neighbor is { IsMarked: true })
 				{
