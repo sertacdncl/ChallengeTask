@@ -25,6 +25,22 @@ MonoBehaviour:
     m_Address: Assets/_Game/AddressableAssets/X.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 540307c7a75e36e48a9275b867ec3950
+    m_Address: Assets/_Game/TaskTwo/AddressableAssets/StackBase.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: a3a8e3244a5d4e0499820b58c0104a04
+    m_Address: Assets/_Game/TaskTwo/AddressableAssets/Level_1.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 3fb7ebe09c55d634cae7afa5cf5fa42e
+    m_Address: Assets/_Game/TaskTwo/AddressableAssets/Level_3 Variant.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: ec4bbe709cc390141a022ab1a04bb7f9
+    m_Address: Assets/_Game/TaskTwo/AddressableAssets/Level_2 Variant.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 0984d4adc3b333d4786b745a8f8e1363, type: 2}
   m_SchemaSet:

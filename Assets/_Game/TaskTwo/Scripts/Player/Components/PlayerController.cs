@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace TaskTwo.Player
+namespace TaskTwo.Player.Components
 {
 	public class PlayerController : MonoBehaviour
 	{

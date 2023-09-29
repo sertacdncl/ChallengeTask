@@ -1,6 +1,5 @@
 using DG.Tweening;
 using TaskOne.Grid.Utils;
-using UnityEditor;
 using UnityEngine;
 using Zenject;
 
@@ -53,7 +52,6 @@ namespace TaskOne.Grid.Components
 					IsInteractable = true;
 				});
 			});
-			
 		}
 
 		private void CheckMarkMatches()
@@ -65,6 +63,7 @@ namespace TaskOne.Grid.Components
 				{
 					markedCell.UnMark();
 				}
+
 				UnMark();
 				GridEvents.OnCellMatch?.Invoke();
 			}

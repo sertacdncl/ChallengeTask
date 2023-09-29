@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Rendering.Universal;
 
 namespace EpicToonFX
 {
@@ -9,12 +10,18 @@ namespace EpicToonFX
         public float life = 0.2f;
         public bool killAfterLife = true;
 
+        private UniversalAdditionalLightData liData;
         private Light li;
         private float initIntensity;
 
         // Use this for initialization
         void Start()
         {
+			var universalAdditionalLightData = GetComponent<UniversalAdditionalLightData>();
+			if (universalAdditionalLightData)
+			{
+				liData = universalAdditionalLightData;
+			}
             if (gameObject.GetComponent<Light>())
             {
                 li = gameObject.GetComponent<Light>();
@@ -30,9 +37,13 @@ namespace EpicToonFX
             if (gameObject.GetComponent<Light>())
             {
                 li.intensity -= initIntensity * (Time.deltaTime / life);
-                if (killAfterLife && li.intensity <= 0)
-                    //Destroy(gameObject);
+				if (killAfterLife && li.intensity <= 0)
+					//Destroy(gameObject);
+				{
+					Destroy(liData);
 					Destroy(gameObject.GetComponent<Light>());
+					
+				}
             }
         }
     }

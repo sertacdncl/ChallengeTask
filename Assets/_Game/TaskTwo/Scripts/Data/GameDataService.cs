@@ -4,13 +4,17 @@ namespace TaskTwo.Data
 {
 	public static class GameDataService
 	{
-		private static string _currentLevelKey = "CurrentLevel";
-		
+		private const string CurrentLevelKey = "CurrentLevel";
+
 		public static int CurrentLevel
 		{
-			get => PlayerPrefs.GetInt(_currentLevelKey, 0);
-			set => PlayerPrefs.SetInt(_currentLevelKey, value);
+			get
+			{
+				if(!PlayerPrefs.HasKey(CurrentLevelKey))
+					PlayerPrefs.SetInt(CurrentLevelKey, 0);
+				return PlayerPrefs.GetInt(CurrentLevelKey);
+			}
+			set => PlayerPrefs.SetInt(CurrentLevelKey, value);
 		}
-		
 	}
 }
