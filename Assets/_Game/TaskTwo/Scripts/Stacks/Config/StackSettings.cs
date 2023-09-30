@@ -10,5 +10,6 @@ namespace TaskTwo.Stacks.Config
 	{
 		public AssetReference stackAssetRef;
 		public List<Material> stackMats;
+		public float moveTime;
 	}
 }

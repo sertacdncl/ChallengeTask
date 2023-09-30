@@ -11,7 +11,6 @@ namespace TaskTwo.Level.Utils
 	{
 		[SerializeField] private List<AssetReference> _levels;
 		[Inject] private AddressableLoader _addressableLoader;
-		[Inject] private LevelFactory _levelFactory;
 		private int CurrentLevel => GameDataService.CurrentLevel;
 		private AssetReference CurrentLevelAsset => _levels[CurrentLevel];
 
@@ -21,7 +20,6 @@ namespace TaskTwo.Level.Utils
 			await load;
 			if (load.Result != null)
 			{
-				// _levelFactory.OnLevelAssetLoaded(CurrentLevelAsset);
 				LevelEvents.OnLevelAssetLoaded?.Invoke(CurrentLevelAsset);
 			}
 		}

@@ -39,3 +39,4 @@ MonoBehaviour:
     - {fileID: 2100000, guid: 2721c33cc7ed8c444bf50bb50b11b055, type: 2}
     - {fileID: 2100000, guid: 0304769e0c8dd25459a3cf2f6b542a59, type: 2}
     - {fileID: 2100000, guid: d0ca2cd4145ff9c4282021e14702f4af, type: 2}
+    moveTime: 1
