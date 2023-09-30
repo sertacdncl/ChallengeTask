@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using System;
+using DG.Tweening;
 using Shared.Extensions;
 using UnityEngine;
 
@@ -9,6 +10,12 @@ namespace TaskOne.Grid.Components
 		[SerializeField] private SpriteRenderer _spriteRenderer;
 		
 		private Tween _fadeTween;
+		private Color _baseColor;
+		private void Awake()
+		{
+			_baseColor = _spriteRenderer.color;
+		}
+
 		public void Mark(Transform parent)
 		{
 			var cellMarkerTransform = transform;
@@ -25,8 +32,14 @@ namespace TaskOne.Grid.Components
 			_fadeTween = _spriteRenderer.DOFade(0, 0.5f).OnComplete(onComplete);
 		}
 
+		public void MatchEffect()
+		{
+			_spriteRenderer.DOColor(Color.red,0.2f);
+		}
+
 		public void Reset()
 		{
+			_spriteRenderer.color = _baseColor;
 			_fadeTween?.Kill();
 			_spriteRenderer.color = _spriteRenderer.color.With(a: 1);
 		}

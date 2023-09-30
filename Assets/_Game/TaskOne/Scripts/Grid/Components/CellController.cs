@@ -61,9 +61,10 @@ namespace TaskOne.Grid.Components
 			{
 				foreach (var markedCell in markedNeighbours)
 				{
+					markedCell.CellMarkerController.MatchEffect();
 					markedCell.UnMark();
 				}
-
+				CellMarkerController.MatchEffect();
 				UnMark();
 				GridEvents.OnCellMatch?.Invoke();
 			}
