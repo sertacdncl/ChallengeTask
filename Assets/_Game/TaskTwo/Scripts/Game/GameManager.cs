@@ -22,6 +22,7 @@ namespace TaskTwo.Game
 		[Inject] private CameraManager _cameraManager;
 		[Inject] private AudioManager _audioManager;
 		private bool _isGameStarted;
+		private Tween _failTween;
 
 		private void OnEnable()
 		{
@@ -108,7 +109,7 @@ namespace TaskTwo.Game
 			_isGameStarted = false;
 			FingerManager.FingerCount--;
 			FingerManager.CanUseFinger = false;
-			DOVirtual.DelayedCall(2, () =>
+			_failTween = DOVirtual.DelayedCall(2, () =>
 			{
 				_uiManager.ToggleFailCanvas(true);
 				_cameraManager.SetFollowTarget(null);
@@ -117,6 +118,7 @@ namespace TaskTwo.Game
 
 		private void OnTryAgain()
 		{
+			_failTween?.Kill();
 			DOVirtual.DelayedCall(1f, () => { FingerManager.CanUseFinger = true; });
 		}
 

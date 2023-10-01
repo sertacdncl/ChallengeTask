@@ -26,8 +26,8 @@ namespace TaskTwo.UI
 
 		public void OnClick_TryAgain()
 		{
-			GameEvents.OnTryAgain?.Invoke();
 			ToggleFailCanvas(false);
+			GameEvents.OnTryAgain?.Invoke();
 			ToggleMainCanvas(true);
 		}
 	}
