@@ -20,5 +20,5 @@ I'm still learning Zenject, so i may used somethings wrong. I tried to optimize 
 
 Gameplay Video
 
-https://github.com/sertacdncl/ChallengeTask/assets/20639384/46e03f44-babc-419f-86ec-e8a54f0bb2cb
+https://github.com/sertacdncl/ChallengeTask/assets/20639384/831951e5-a837-4ed4-80d5-1adffb2130f5
 
