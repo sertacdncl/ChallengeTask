@@ -3,9 +3,12 @@ using Shared.Finger;
 using TaskTwo.Audio;
 using TaskTwo.Camera;
 using TaskTwo.Data;
+using TaskTwo.Effects;
 using TaskTwo.Level.Utils;
 using TaskTwo.Stacks;
+using TaskTwo.UI;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace TaskTwo.Game
@@ -46,6 +49,11 @@ namespace TaskTwo.Game
 
 		private void Update()
 		{
+#if UNITY_EDITOR
+			if (Input.GetKeyDown(KeyCode.Escape))
+				SceneManager.LoadScene(0);
+#endif
+			
 			if (!_isGameStarted)
 				return;
 			OnFingerDown();
