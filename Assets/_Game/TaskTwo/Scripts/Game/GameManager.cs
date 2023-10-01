@@ -1,7 +1,8 @@
 ﻿using DG.Tweening;
 using Shared.Finger;
+using TaskTwo.Audio;
 using TaskTwo.Camera;
-using TaskTwo.Level;
+using TaskTwo.Data;
 using TaskTwo.Level.Utils;
 using TaskTwo.Stacks;
 using UnityEngine;
@@ -11,46 +12,72 @@ namespace TaskTwo.Game
 {
 	public class GameManager : MonoBehaviour
 	{
+		[SerializeField] private ConfettiController _confettiController;
 		[Inject] private LevelSetupService _levelSetupService;
-		[Inject] private LevelManager _levelManager;
-		
-		[Inject] private StacksManager _stacksManager;
 		[Inject] private UIManager _uiManager;
+		[Inject] private StacksManager _stacksManager;
 		[Inject] private CameraManager _cameraManager;
+		[Inject] private AudioManager _audioManager;
 		private bool _isGameStarted;
 
 		private void OnEnable()
 		{
 			LevelEvents.OnStackPoolReady += OnStackPoolReady;
+			LevelEvents.OnLevelReady += OnLevelReady;
 			LevelEvents.OnLevelFailed += OnLevelFailed;
 			LevelEvents.OnLevelFinished += OnLevelFinish;
+			GameEvents.OnPlayerFall += OnPlayerFalling;
 			GameEvents.OnTryAgain += OnTryAgain;
 		}
 
 		private void OnDisable()
 		{
 			LevelEvents.OnStackPoolReady -= OnStackPoolReady;
+			LevelEvents.OnLevelReady -= OnLevelReady;
 			LevelEvents.OnLevelFailed -= OnLevelFailed;
 			LevelEvents.OnLevelFinished -= OnLevelFinish;
+			GameEvents.OnPlayerFall -= OnPlayerFalling;
 			GameEvents.OnTryAgain -= OnTryAgain;
+		}
+
+		private void Start()
+		{
+			FingerManager.CanUseFinger = false;
+			_stacksManager._stackPool.SetupPool(_stacksManager.stacksPoolParent);
 		}
 
 		private void OnStackPoolReady()
 		{
 			_levelSetupService.SetupLevel();
 		}
-		
+
+		private void OnLevelReady()
+		{
+			FingerManager.CanUseFinger = true;
+		}
+
 		private void OnTryAgain()
 		{
-			
+			DOVirtual.DelayedCall(1f, () => { FingerManager.CanUseFinger = true; });
 		}
 
 
 		public void OnClick_StartGame()
 		{
-			FingerManager.MaxFingerCount = 1;
+			if (!FingerManager.CanTouch)
+				return;
+			_uiManager.ToggleMainCanvas(false);
 			_isGameStarted = true;
 			GameEvents.OnGameStarted?.Invoke();
+		}
+
+		public void OnClick_NextLevel()
+		{
+			GameDataService.CurrentLevel++;
+			LevelEvents.OnNextLevel?.Invoke();
+			_uiManager.ToggleSuccessCanvas(false);
+			_uiManager.ToggleMainCanvas(true);
+			_levelSetupService.SetupLevel();
 		}
 
 		private void Update()
@@ -78,7 +105,13 @@ namespace TaskTwo.Game
 
 		private void OnLevelFailed()
 		{
+			_isGameStarted = false;
+			FingerManager.FingerCount--;
 			FingerManager.CanUseFinger = false;
+		}
+
+		private void OnPlayerFalling()
+		{
 			DOVirtual.DelayedCall(2, () =>
 			{
 				_uiManager.ToggleFailCanvas(true);
@@ -88,7 +121,12 @@ namespace TaskTwo.Game
 
 		private void OnLevelFinish()
 		{
+			_isGameStarted = false;
+			FingerManager.FingerCount--;
 			FingerManager.CanUseFinger = false;
+			_audioManager.PlayConfetti();
+			_confettiController.PlayParticle();
+			DOVirtual.DelayedCall(1f, () => { _uiManager.ToggleSuccessCanvas(true); });
 		}
 	}
 }

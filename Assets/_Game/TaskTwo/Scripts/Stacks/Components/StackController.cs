@@ -28,7 +28,7 @@ namespace TaskTwo.Stacks.Components
 		
 		public void SetMeshMaterial(Material material)
 		{
-			meshRenderer.material = material;
+			meshRenderer.material = new Material(material);
 		}
 	}
 }

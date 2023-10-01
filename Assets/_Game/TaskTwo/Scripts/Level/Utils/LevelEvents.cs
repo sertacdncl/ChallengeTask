@@ -7,8 +7,9 @@ namespace TaskTwo.Level.Utils
 	{
 		public static UnityAction OnStackPoolReady;
 		public static UnityAction<AssetReference> OnLevelAssetLoaded;
-		public static UnityAction OnLevelCreated;
+		public static UnityAction OnLevelReady;
 		public static UnityAction OnLevelFailed;
 		public static UnityAction OnLevelFinished;
+		public static UnityAction OnNextLevel;
 	}
 }

@@ -27,9 +27,19 @@ namespace TaskTwo.Level.Utils
 				var level = handle.Result;
 				if (level.TryGetComponent<LevelController>(out var levelController))
 				{
-					_levelManager.currentLevelController = levelController;
+					if (!ReferenceEquals(_levelManager.currentLevelController, null))
+					{
+						var oldLevel = _levelManager.currentLevelController;
+						_levelManager.currentLevelController = levelController;
+						levelController.transform.position = oldLevel.finishArea.position;
+						oldLevel.gameObject.SetActive(false);
+					}
+					else
+						_levelManager.currentLevelController = levelController;
+					
+					
 					_container.Inject(levelController);
-					LevelEvents.OnLevelCreated?.Invoke();
+					LevelEvents.OnLevelReady?.Invoke();
 				}
 			};
 		}

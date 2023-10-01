@@ -7,5 +7,6 @@ namespace TaskTwo.Game
 		public static UnityAction OnGameStarted;
 		public static UnityAction OnTouchToCut;
 		public static UnityAction OnTryAgain;
+		public static UnityAction OnPlayerFall;
 	}
 }

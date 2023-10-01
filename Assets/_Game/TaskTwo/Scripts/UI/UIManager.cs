@@ -26,5 +26,6 @@ public class UIManager : MonoBehaviour
 	{
 		GameEvents.OnTryAgain?.Invoke();
 		ToggleFailCanvas(false);
+		ToggleMainCanvas(true);
 	}
 }

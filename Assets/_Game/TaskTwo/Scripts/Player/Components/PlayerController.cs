@@ -18,6 +18,7 @@ namespace TaskTwo.Player.Components
 		[Inject] private LevelManager _levelManager;
 		[Inject] private StacksManager _stacksManager;
 		[Inject] private CameraManager _cameraManager;
+		[SerializeField] private Transform _playerObjectTransform;
 
 		public enum PlayerState
 		{
@@ -72,42 +73,63 @@ namespace TaskTwo.Player.Components
 
 		private bool _initialized;
 		private bool _gameStarted;
-		
+		private float _playerStartSpeed;
+		private Tween _playerFall;
 
 
 		private void OnEnable()
 		{
-			LevelEvents.OnLevelCreated += OnLevelCreated;
+			LevelEvents.OnLevelReady += OnLevelCreated;
+			LevelEvents.OnNextLevel += OnNextLevel;
 			GameEvents.OnGameStarted += OnGameStart;
 			GameEvents.OnTryAgain += OnTryAgain;
+			
 		}
 
 		private void OnDisable()
 		{
-			LevelEvents.OnLevelCreated -= OnLevelCreated;
+			LevelEvents.OnLevelReady -= OnLevelCreated;
+			LevelEvents.OnNextLevel -= OnNextLevel;
 			GameEvents.OnGameStarted -= OnGameStart;
 			GameEvents.OnTryAgain -= OnTryAgain;
 		}
 
 		private void Start()
 		{
+			_playerStartSpeed = _playerSpeed;
 			_playerRigidbody = GetComponent<Rigidbody>();
 		}
 
 		private void OnLevelCreated()
 		{
-			transform.position = _levelManager.currentLevelController.startArea.position.With();
+			transform.position = _levelManager.currentLevelController.startArea.position.WithAddY(.5f);
 			_playerRigidbody.isKinematic = false;
 			_initialized = true;
 		}
 
-		private void OnTryAgain()
+		private void OnNextLevel()
 		{
 			State = PlayerState.Idle;
+			_playerSpeed = _playerStartSpeed;
 			_playerRigidbody.isKinematic = true;
-			_playerRigidbody.velocity = Vector3.zero;
-			transform.position = _levelManager.currentLevelController.startArea.position.With();
+			_playerObjectTransform.localPosition = Vector3.zero;
+			_playerObjectTransform.localRotation = Quaternion.identity;
+			_playerAnimator.enabled = true;
+			_playerRigidbody.isKinematic = false;
+		}
+
+		private void OnTryAgain()
+		{
+			_playerFall?.Kill();
+			State = PlayerState.Idle;
+			_playerSpeed = _playerStartSpeed;
+			_playerRigidbody.isKinematic = true;
+			transform.position = _levelManager.currentLevelController.startArea.position.WithAddY(0.1f);
+			_playerObjectTransform.localPosition = Vector3.zero;
+			_playerObjectTransform.localRotation = Quaternion.identity;
 			_cameraManager.SetFollowTarget(transform);
+			_playerAnimator.enabled = true;
+
 			_playerRigidbody.isKinematic = false;
 		}
 
@@ -115,7 +137,7 @@ namespace TaskTwo.Player.Components
 		{
 			if (!_initialized || !_gameStarted)
 				return;
-			
+
 			if (State != PlayerState.Run) return;
 
 			var myTransform = transform;
@@ -124,7 +146,7 @@ namespace TaskTwo.Player.Components
 			if (Physics.Raycast(ray, out var hit, 10))
 			{
 				MoveForward();
-				
+
 				bool isFinish = hit.collider.CompareTag("Finish");
 				if (isFinish)
 				{
@@ -137,17 +159,20 @@ namespace TaskTwo.Player.Components
 				_playerSpeed = 0;
 				State = PlayerState.Fall;
 				LevelEvents.OnLevelFailed?.Invoke();
-				DOVirtual.DelayedCall(2.2f, () =>
+				GameEvents.OnPlayerFall?.Invoke();
+
+				_playerFall = DOVirtual.DelayedCall(2.1f, () =>
 				{
 					_playerRigidbody.isKinematic = true;
+					_playerAnimator.enabled = false;
 				});
+
 
 				foreach (var stackController in _stacksManager.activeStacksList)
 				{
 					stackController.collider.isTrigger = true;
 				}
 			}
-			
 		}
 
 		private void MoveForward()
@@ -155,7 +180,7 @@ namespace TaskTwo.Player.Components
 			_playerRigidbody.velocity = (Vector3.forward * _playerSpeed);
 			var playerPos = _playerRigidbody.transform.position;
 			playerPos = Vector3.Lerp(playerPos,
-				new Vector3(_stacksManager.lastStackTransform.transform.position.x, playerPos.y,
+				new Vector3(_stacksManager.lastPlacedStackTransform.transform.position.x, playerPos.y,
 					playerPos.z),
 				TimeMultiplier * Time.deltaTime);
 			_playerRigidbody.transform.position = playerPos;
@@ -166,9 +191,10 @@ namespace TaskTwo.Player.Components
 			State = PlayerState.Run;
 			_gameStarted = true;
 		}
-		
+
 		private void OnGameFinish()
 		{
+			_playerRigidbody.isKinematic = true;
 			State = PlayerState.Dance;
 			_gameStarted = false;
 		}

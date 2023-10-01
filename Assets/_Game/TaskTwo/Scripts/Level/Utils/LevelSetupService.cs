@@ -12,7 +12,17 @@ namespace TaskTwo.Level.Utils
 		[SerializeField] private List<AssetReference> _levels;
 		[Inject] private AddressableLoader _addressableLoader;
 		private int CurrentLevel => GameDataService.CurrentLevel;
-		private AssetReference CurrentLevelAsset => _levels[CurrentLevel];
+		private AssetReference CurrentLevelAsset
+		{
+			get
+			{
+				var level = CurrentLevel;
+				if(_levels.Count <= CurrentLevel)
+					level = Random.Range(0, _levels.Count);
+				GameDataService.CurrentLevel = level;
+				return _levels[CurrentLevel];
+			}
+		}
 
 		public async void SetupLevel()
 		{

@@ -15,20 +15,19 @@ namespace TaskTwo.Stacks.Utils
 	[UsedImplicitly]
 	public class StackPoolService
 	{
+		private bool _isPoolInitialized;
+		private Transform _poolParentTransform;
+		private const int InitialPoolSize = 10;
+		
+		private Stack<StackController> _objectPool = new();
+		private Vector3 _originalScale = Vector3.zero;
+		
 		private AddressableLoader _addressableLoader;
 		private StackSettings _stackSettings;
 
-		public Transform poolParentTransform;
-		private const int InitialPoolSize = 10;
-		private bool _initialized;
-		private bool _isPoolReady;
-		private Stack<StackController> _objectPool = new();
-		private Vector3 _originalScale = Vector3.zero;
-
 		[Inject]
 		private StackPoolService(AddressableLoader addressableLoader
-			, StackSettingsData stackSettingsData
-			, StacksManager stacksManager)
+			, StackSettingsData stackSettingsData)
 		{
 			_addressableLoader = addressableLoader;
 			_stackSettings = stackSettingsData.StackSettings;
@@ -37,15 +36,15 @@ namespace TaskTwo.Stacks.Utils
 
 		public async void SetupPool(Transform poolParent = null)
 		{
-			if (!_initialized)
+			if (!_isPoolInitialized)
 			{
-				poolParentTransform = poolParent;
+				_poolParentTransform = poolParent;
 				var stackLoadTask = _addressableLoader.LoadAsset(_stackSettings.stackAssetRef);
 				await stackLoadTask;
+
 				if (stackLoadTask.IsCompletedSuccessfully)
 				{
 					CreatePool();
-					_initialized = true;
 				}
 			}
 			else
@@ -56,8 +55,7 @@ namespace TaskTwo.Stacks.Utils
 		{
 			for (int i = 0; i < InitialPoolSize; i++)
 			{
-				Addressables.InstantiateAsync(_stackSettings.stackAssetRef, poolParentTransform).Completed +=
-					OnObjectInstantiated;
+				Addressables.InstantiateAsync(_stackSettings.stackAssetRef, _poolParentTransform).Completed += OnObjectInstantiated;
 			}
 		}
 
@@ -72,9 +70,9 @@ namespace TaskTwo.Stacks.Utils
 				if (obj.TryGetComponent<StackController>(out var stackController))
 					_objectPool.Push(stackController);
 
-				if (_objectPool.Count >= 3 && !_isPoolReady)
+				if (_objectPool.Count >= InitialPoolSize && !_isPoolInitialized)
 				{
-					_isPoolReady = true;
+					_isPoolInitialized = true;
 					LevelEvents.OnStackPoolReady?.Invoke();
 				}
 			}
@@ -86,17 +84,22 @@ namespace TaskTwo.Stacks.Utils
 				SetupPool();
 
 			StackController stackController = _objectPool.Pop();
-
 			return stackController;
 		}
 
-		public void ReturnCellMarkerToPool(StackController stackController)
+		public void ReturnStackToPool(StackController stackController)
 		{
 			stackController.gameObject.SetActive(false);
 			stackController.moveTween?.Kill();
+			stackController.transform.SetParent(_poolParentTransform);
 			stackController.transform.localScale = _originalScale;
-			stackController.collider.enabled = true;
-			stackController.transform.SetParent(poolParentTransform);
+			stackController.transform.localRotation = Quaternion.identity;
+			stackController.ToggleRigidbodyKinematic(true);
+			stackController.rigidbody.mass = 1;
+			stackController.collider.isTrigger = false;
+			
+			if(_objectPool.Contains(stackController))
+				Debug.Log("Found same stack in pool");
 			_objectPool.Push(stackController);
 		}
 	}
