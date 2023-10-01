@@ -32,7 +32,8 @@ namespace TaskTwo.Level.Utils
 						var oldLevel = _levelManager.currentLevelController;
 						_levelManager.currentLevelController = levelController;
 						levelController.transform.position = oldLevel.finishArea.position;
-						oldLevel.gameObject.SetActive(false);
+						Addressables.ReleaseInstance(oldLevel.gameObject);
+						
 					}
 					else
 						_levelManager.currentLevelController = levelController;

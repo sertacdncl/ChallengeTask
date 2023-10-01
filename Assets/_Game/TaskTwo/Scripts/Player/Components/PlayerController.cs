@@ -79,16 +79,17 @@ namespace TaskTwo.Player.Components
 
 		private void OnEnable()
 		{
+			LevelEvents.OnLevelFailed += OnLevelFailed;
 			LevelEvents.OnLevelReady += OnLevelCreated;
 			LevelEvents.OnNextLevel += OnNextLevel;
 			GameEvents.OnGameStarted += OnGameStart;
 			GameEvents.OnTryAgain += OnTryAgain;
-			
 		}
 
 		private void OnDisable()
 		{
 			LevelEvents.OnLevelReady -= OnLevelCreated;
+			LevelEvents.OnLevelFailed -= OnLevelFailed;
 			LevelEvents.OnNextLevel -= OnNextLevel;
 			GameEvents.OnGameStarted -= OnGameStart;
 			GameEvents.OnTryAgain -= OnTryAgain;
@@ -98,39 +99,6 @@ namespace TaskTwo.Player.Components
 		{
 			_playerStartSpeed = _playerSpeed;
 			_playerRigidbody = GetComponent<Rigidbody>();
-		}
-
-		private void OnLevelCreated()
-		{
-			transform.position = _levelManager.currentLevelController.startArea.position.WithAddY(.5f);
-			_playerRigidbody.isKinematic = false;
-			_initialized = true;
-		}
-
-		private void OnNextLevel()
-		{
-			State = PlayerState.Idle;
-			_playerSpeed = _playerStartSpeed;
-			_playerRigidbody.isKinematic = true;
-			_playerObjectTransform.localPosition = Vector3.zero;
-			_playerObjectTransform.localRotation = Quaternion.identity;
-			_playerAnimator.enabled = true;
-			_playerRigidbody.isKinematic = false;
-		}
-
-		private void OnTryAgain()
-		{
-			_playerFall?.Kill();
-			State = PlayerState.Idle;
-			_playerSpeed = _playerStartSpeed;
-			_playerRigidbody.isKinematic = true;
-			transform.position = _levelManager.currentLevelController.startArea.position.WithAddY(0.1f);
-			_playerObjectTransform.localPosition = Vector3.zero;
-			_playerObjectTransform.localRotation = Quaternion.identity;
-			_cameraManager.SetFollowTarget(transform);
-			_playerAnimator.enabled = true;
-
-			_playerRigidbody.isKinematic = false;
 		}
 
 		private void FixedUpdate()
@@ -159,7 +127,6 @@ namespace TaskTwo.Player.Components
 				_playerSpeed = 0;
 				State = PlayerState.Fall;
 				LevelEvents.OnLevelFailed?.Invoke();
-				GameEvents.OnPlayerFall?.Invoke();
 
 				_playerFall = DOVirtual.DelayedCall(2.1f, () =>
 				{
@@ -186,6 +153,44 @@ namespace TaskTwo.Player.Components
 			_playerRigidbody.transform.position = playerPos;
 		}
 
+		private void OnLevelCreated()
+		{
+			transform.position = _levelManager.currentLevelController.startArea.position.WithAddY(.5f);
+			_playerRigidbody.isKinematic = false;
+			_initialized = true;
+		}
+
+		private void OnTryAgain()
+		{
+			_playerFall?.Kill();
+			State = PlayerState.Idle;
+			_playerSpeed = _playerStartSpeed;
+			_playerRigidbody.isKinematic = true;
+			transform.position = _levelManager.currentLevelController.startArea.position.WithAddY(0.1f);
+			_playerObjectTransform.localPosition = Vector3.zero;
+			_playerObjectTransform.localRotation = Quaternion.identity;
+			_cameraManager.SetFollowTarget(transform);
+			_playerAnimator.enabled = true;
+
+			_playerRigidbody.isKinematic = false;
+		}
+
+		private void OnLevelFailed()
+		{
+			_playerSpeed *= 2;
+		}
+
+		private void OnNextLevel()
+		{
+			State = PlayerState.Idle;
+			_playerSpeed = _playerStartSpeed;
+			_playerRigidbody.isKinematic = true;
+			_playerObjectTransform.localPosition = Vector3.zero;
+			_playerObjectTransform.localRotation = Quaternion.identity;
+			_playerAnimator.enabled = true;
+			_playerRigidbody.isKinematic = false;
+		}
+		
 		private void OnGameStart()
 		{
 			State = PlayerState.Run;
@@ -194,7 +199,8 @@ namespace TaskTwo.Player.Components
 
 		private void OnGameFinish()
 		{
-			_playerRigidbody.isKinematic = true;
+			DOVirtual.DelayedCall(0.1f, () => { _playerRigidbody.isKinematic = true; });
+
 			State = PlayerState.Dance;
 			_gameStarted = false;
 		}

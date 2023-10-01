@@ -209,14 +209,12 @@ namespace TaskTwo.Stacks
 			cutStack.gameObject.SetActive(true);
 
 
-			bool failThreshold = cutStack.transform.localScale.x > .05f;
-			if (failThreshold)
+			bool isStackPlaced = cutStack.transform.localScale.x > .05f;
+			if (isStackPlaced)
 			{
 				lastPlacedStackTransform = cutStack.transform;
 				if (activeStacksList.Count < _levelManager.currentLevelController.levelLength)
 					CreateNextStack();
-				// else
-				// LevelEvents.OnLevelFinished?.Invoke();
 
 				CreateStackPlaceEffect();
 			}
