@@ -4,7 +4,7 @@
 2nd - Player running on a platform while try to creating road (like Stack game)  
 
 
-Controls: 
+Controls:  
 •Touch/Mouse Input  
 •ESC for back to Main menu  
 
