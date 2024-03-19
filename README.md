@@ -16,7 +16,7 @@ Technologies:
 
 
 Notes:  
-I'm still learning Zenject, so i may used somethings wrong. I tried to optimize as much i can for example using Addressables, pooling. I think i can optimize it better in future. I tried to use Future Foldering structure. I also used Assembly Definitios to seperate projects.
+I'm still learning Zenject, so i may used somethings wrong. I tried to optimize as much i can for example using Addressables, pooling. I think i can optimize it better in future. I tried to use Future Foldering structure. I also used Assembly Definitions to seperate projects.
 
 Gameplay Video
 
