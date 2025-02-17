@@ -1,4 +1,4 @@
-# Challenge Task - Case Study for Game Guru  
+# Challenge Task - Case Study
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  
 1st - Grid System with matching 3 cross  
 2nd - Player running on a platform while try to creating road (like Stack game)  
